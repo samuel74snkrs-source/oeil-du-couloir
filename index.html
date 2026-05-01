@@ -1322,30 +1322,17 @@ window.addEventListener('scroll', function(){
   };
 })();
 
-// Use first published hotel's first photo as hero image (zero network dependency)
+// ─── Hero image ───
+// Conserve hero.jpg (du repo) par défaut.
+// Pour utiliser à la place la photo du premier hôtel publié, passer USE_HOTEL_PHOTO à true.
+var USE_HOTEL_PHOTO_AS_HERO = false;
 function setHeroImage(){
-  try {
-    var hotels = JSON.parse(localStorage.getItem('odc_hotels')||'[]').filter(function(h){return h.status==='published' && h.photos && h.photos.length;});
-    if(hotels.length){
-      // Pick the first photo of the first published hotel with photos
-      var heroBg = document.getElementById('hero-bg');
-      var img = heroBg && heroBg.querySelector('img');
-      if(img && hotels[0].photos[0] && hotels[0].photos[0].data){
-        img.src = hotels[0].photos[0].data;
-      }
-    }
-  } catch(e){}
-}
-setHeroImage();
-
-// ─── Hero image: use first published hotel's first photo (always available, embedded) ───
-function setHeroImage(){
+  if(!USE_HOTEL_PHOTO_AS_HERO) return; // garde hero.jpg
   try{
     var data = getDataNew();
-    var hotels = data.hotels;
+    var hotels = (data && data.hotels) || [];
     var img = document.querySelector('#hero-bg img');
     if(!img || !hotels.length) return;
-    // Find first hotel with a photo
     for(var i=0;i<hotels.length;i++){
       if(hotels[i].photos && hotels[i].photos[0] && hotels[i].photos[0].data){
         img.src = hotels[i].photos[0].data;
